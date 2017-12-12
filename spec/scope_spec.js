@@ -3,31 +3,48 @@
 
 'use strict'
 
-describe("Scope", function(){
+describe("Scope", function () {
 
-    it("can be constructed and use as object",function(){
-        var scope =  new Scope();
+    it("can be constructed and use as object", function () {
+        var scope = new Scope();
         scope.aProperty = 1;
 
         expect(scope.aProperty).toBe(1);
     });
 
-    describe("digest",function(){
+    describe("digest", function () {
         var scope;
 
-        beforeEach(function(){
+        beforeEach(function () {
             scope = new Scope();
         });
 
-        it("call the listener function of a watch on first $digest",function(){
-            var watchFn = function(){ return 'wat';}
+        it("call the listener function of a watch on first $digest", function () {
+            var watchFn = function () {
+                return 'wat';
+            }
             var listnerFn = jasmine.createSpy();
 
-            scope.$watch(watchFn,listnerFn);
+            scope.$watch(watchFn, listnerFn);
 
             scope.$digest();
 
             expect(listnerFn).toHaveBeenCalled();
         });
+
+        it("calls the watch function with scope as the argumnent", function () {
+            var watchFn = jasmine.createSpy();
+            var listnerFn = function(){};
+
+            scope.$watch(watchFn,listnerFn);
+
+            scope.$digest();
+
+            expect(watchFn).toHaveBeenCalledWith(scope);
+
+        });
+
+        
+
     });
 });
