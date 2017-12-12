@@ -23,20 +23,20 @@ describe("Scope", function () {
             var watchFn = function () {
                 return 'wat';
             }
-            var listnerFn = jasmine.createSpy();
+            var listenerFn = jasmine.createSpy();
 
-            scope.$watch(watchFn, listnerFn);
+            scope.$watch(watchFn, listenerFn);
 
             scope.$digest();
 
-            expect(listnerFn).toHaveBeenCalled();
+            expect(listenerFn).toHaveBeenCalled();
         });
 
         it("calls the watch function with scope as the argumnent", function () {
             var watchFn = jasmine.createSpy();
-            var listnerFn = function(){};
+            var listenerFn = function(){};
 
-            scope.$watch(watchFn,listnerFn);
+            scope.$watch(watchFn,listenerFn);
 
             scope.$digest();
 
@@ -44,7 +44,30 @@ describe("Scope", function () {
 
         });
 
-        
+        it("calls the listner function  when the watched value changes",function(){
+                scope.someValue = 'a';
+                scope.counter = 0;
+
+                scope.$watch(
+                    function(scope){return scope.someValue ;},
+                    function(newValue , oldValue , scope){ scope.counter++;}
+                );
+
+                expect(scope.counter).toBe(0);
+
+                scope.$digest();
+                expect(scope.counter).toBe(1);
+
+                scope.$digest();
+                expect(scope.counter).toBe(1);
+
+                scope.someValue = 'b';
+                expect(scope.counter).toBe(1);
+
+                scope.$digest();
+                expect(scope.counter).toBe(2);
+        });
+
 
     });
 });
