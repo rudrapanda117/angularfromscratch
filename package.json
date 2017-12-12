@@ -1,0 +1,30 @@
+{
+  "name": "angularfromscratch",
+  "version": "1.0.0",
+  "description": "practicing angular js from scratch",
+  "main": "index.js",
+  "directories": {
+    "test": "spec"
+  },
+  "scripts": {
+    "test": "karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rudrapanda117/angularfromscratch.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rudrapanda117/angularfromscratch/issues"
+  },
+  "homepage": "https://github.com/rudrapanda117/angularfromscratch#readme",
+  "devDependencies": {
+    "jasmine-core": "^2.8.0",
+    "karma": "^1.7.1",
+    "karma-jasmine": "^1.1.1",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-spec-reporter": "0.0.31",
+    "phantomjs": "^2.1.7"
+  }
+}
