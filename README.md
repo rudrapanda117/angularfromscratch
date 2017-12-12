@@ -1,1 +1,1 @@
-angularfromscratch
+practicing angular js from scratch
