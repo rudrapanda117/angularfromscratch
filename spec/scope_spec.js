@@ -82,5 +82,13 @@ describe("Scope", function () {
             expect(scope.counter).toBe(1);
         });
 
+        it("may have watchers that omit the listner function",function(){
+            var watchFn = jasmine.createSpy().and.returnValue('something');
+            scope.$watch(watchFn);
+            scope.$digest();
+
+            expect(watchFn).toHaveBeenCalled();
+        });
+
     });
 });
