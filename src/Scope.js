@@ -17,6 +17,10 @@ Scope.prototype.$watch = function (watchFn, listenerFn) {
     };
 
     this.$$watchers.push(watcher);
+    /** This is for corner case in which a watch fn is register inside another listnerFn.
+     * We are resetting lastDirtyWatch check so that the digest runs for last registed watch also.
+     */
+    this.$$lastDirtyWatch = null;
 };
 
 
