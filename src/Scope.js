@@ -21,6 +21,7 @@ Scope.prototype.$digest = function(){
     var self =  this;
     var newValue, oldValue;
     _.forEach(this.$$watchers,function(watcher){
+        console.log('newValue',newValue);
         newValue = watcher.watchFn(self);
         oldValue = watcher.last;
         if(newValue !== oldValue){

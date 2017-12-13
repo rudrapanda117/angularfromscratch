@@ -34,9 +34,9 @@ describe("Scope", function () {
 
         it("calls the watch function with scope as the argumnent", function () {
             var watchFn = jasmine.createSpy();
-            var listenerFn = function(){};
+            var listenerFn = function () {};
 
-            scope.$watch(watchFn,listenerFn);
+            scope.$watch(watchFn, listenerFn);
 
             scope.$digest();
 
@@ -44,45 +44,53 @@ describe("Scope", function () {
 
         });
 
-        it("calls the listner function  when the watched value changes",function(){
-                scope.someValue = 'a';
-                scope.counter = 0;
+        it("calls the listner function  when the watched value changes", function () {
+            scope.someValue = 'a';
+            scope.counter = 0;
 
-                scope.$watch(
-                    function(scope){return scope.someValue ;},
-                    function(newValue , oldValue , scope){ scope.counter++;}
-                );
+            scope.$watch(
+                function (scope) {
+                    return scope.someValue;
+                },
+                function (newValue, oldValue, scope) {
+                    scope.counter++;
+                }
+            );
 
-                expect(scope.counter).toBe(0);
+            expect(scope.counter).toBe(0);
 
-                scope.$digest();
-                expect(scope.counter).toBe(1);
+            scope.$digest();
+            expect(scope.counter).toBe(1);
 
-                scope.$digest();
-                expect(scope.counter).toBe(1);
+            scope.$digest();
+            expect(scope.counter).toBe(1);
 
-                scope.someValue = 'b';
-                expect(scope.counter).toBe(1);
+            scope.someValue = 'b';
+            expect(scope.counter).toBe(1);
 
-                scope.$digest();
-                expect(scope.counter).toBe(2);
+            scope.$digest();
+            expect(scope.counter).toBe(2);
         });
 
 
-        it("calls listener when watch value is first undefined",function(){
+        it("calls listener when watch value is first undefined", function () {
             scope.someValue = 123;
             scope.counter = 0;
 
             scope.$watch(
-                function(scope){ return scope.someValue;},
-                function(newValue, oldValue,scope){scope.counter++;}
+                function (scope) {
+                    return scope.someValue;
+                },
+                function (newValue, oldValue, scope) {
+                    scope.counter++;
+                }
             );
 
             scope.$digest();
             expect(scope.counter).toBe(1);
         });
 
-        it("may have watchers that omit the listner function",function(){
+        it("may have watchers that omit the listner function", function () {
             var watchFn = jasmine.createSpy().and.returnValue('something');
             scope.$watch(watchFn);
             scope.$digest();
@@ -90,5 +98,46 @@ describe("Scope", function () {
             expect(watchFn).toHaveBeenCalled();
         });
 
+        it("triggers chained watchers in the same digest", function () {
+            scope.name = 'Jane';
+
+
+            /** watchers are registered in order to pass this test */
+
+            /**watcher1 */
+            scope.$watch(
+                function (scope) {
+                    return scope.name;
+                },
+                function (newValue, oldValue, scope) {
+                    if (newValue) {
+                        scope.nameUpper = newValue.toUpperCase();
+                    }
+                }
+            );
+
+            /** watcher 2 
+             * It depends on watcher1 for setting the value for watcher1
+             */
+            scope.$watch(
+                function (scope) {
+                    return scope.nameUpper;
+                },
+                function (newValue, oldValue, scope) {
+                    if (newValue) {
+                        scope.initial = newValue.substring(0, 1) + '.';
+                    }
+                }
+            );
+
+          
+
+            scope.$digest();
+            expect(scope.initial).toBe('J.');
+
+            scope.name = 'Bob';
+            scope.$digest();
+            expect(scope.initial).toBe('B.');
+        });
     });
 });
