@@ -102,17 +102,14 @@ describe("Scope", function () {
             scope.name = 'Jane';
 
 
-            /** watchers are registered in out of order .
-             * This test fails with error Expected undefined to be 'J.'.
-             * 
-             * watcher2 watches scope.nameUpper.
-             * scope.nampper is populated by watcher1 based on value of scope.name.
-             * When watchers are run in out of order the proper value is not set.
-             */
+            /**  dependencies between watches do not rely on their registration order */
 
-            
+
             /** watcher 2 
-             * It depends on watcher1 for setting the value for watcher1
+             * It depends on watcher1 for setting the value for watcher1.
+             * we need to do is to modify the digest so that it keeps iterating over all watches until
+             * the watched values stop changing. Doing multiple passes is the only way we can get changes
+             * applied for watchers that rely on other watchers
              */
             scope.$watch(
                 function (scope) {
@@ -137,7 +134,7 @@ describe("Scope", function () {
                 }
             );
 
-          
+
 
             scope.$digest();
             expect(scope.initial).toBe('J.');
