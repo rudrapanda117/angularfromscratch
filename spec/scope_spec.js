@@ -195,9 +195,30 @@ describe("Scope", function () {
             scope.$digest();
             expect(watchExecutions).toBe(200);
 
+            watchExecutions = 0;
+
+            scope.$digest();
+            expect(watchExecutions).toBe(100);
+
+            watchExecutions = 0;
+
             scope.array[0] = 117;
             scope.$digest();
-            expect(watchExecutions).toBe(301);
+            expect(watchExecutions).toBe(101);
+
+            watchExecutions = 0;
+
+            scope.array[49] = 117;
+            scope.$digest();
+            expect(watchExecutions).toBe(150);
+
+            watchExecutions = 0;
+
+            scope.array[99] = 117;
+            scope.$digest();
+            expect(watchExecutions).toBe(200);
+
+            
         });
     });
 });
