@@ -29,7 +29,7 @@ Scope.prototype.$$digestOnce = function () {
     // tracking dirty status
     var newValue, oldValue, dirty;
     _.forEach(this.$$watchers, function (watcher) {
-  
+
         newValue = watcher.watchFn(self);
         oldValue = watcher.last;
         if (newValue !== oldValue) {
@@ -44,9 +44,14 @@ Scope.prototype.$$digestOnce = function () {
 
 // Now the digest function iterates till the digest cycle is dirty
 Scope.prototype.$digest = function () {
+    //Counter to track digest cycle
+    var ttl = 10;
     var dirty;
     do {
         dirty = this.$$digestOnce();
+        if (dirty && !(ttl--)) {
+            throw new Error("10 digest iterations reached");
+        }
     } while (dirty);
 };
 
