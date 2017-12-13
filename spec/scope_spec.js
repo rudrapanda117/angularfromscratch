@@ -102,20 +102,15 @@ describe("Scope", function () {
             scope.name = 'Jane';
 
 
-            /** watchers are registered in order to pass this test */
+            /** watchers are registered in out of order .
+             * This test fails with error Expected undefined to be 'J.'.
+             * 
+             * watcher2 watches scope.nameUpper.
+             * scope.nampper is populated by watcher1 based on value of scope.name.
+             * When watchers are run in out of order the proper value is not set.
+             */
 
-            /**watcher1 */
-            scope.$watch(
-                function (scope) {
-                    return scope.name;
-                },
-                function (newValue, oldValue, scope) {
-                    if (newValue) {
-                        scope.nameUpper = newValue.toUpperCase();
-                    }
-                }
-            );
-
+            
             /** watcher 2 
              * It depends on watcher1 for setting the value for watcher1
              */
@@ -126,6 +121,18 @@ describe("Scope", function () {
                 function (newValue, oldValue, scope) {
                     if (newValue) {
                         scope.initial = newValue.substring(0, 1) + '.';
+                    }
+                }
+            );
+
+            /**watcher1 */
+            scope.$watch(
+                function (scope) {
+                    return scope.name;
+                },
+                function (newValue, oldValue, scope) {
+                    if (newValue) {
+                        scope.nameUpper = newValue.toUpperCase();
                     }
                 }
             );
