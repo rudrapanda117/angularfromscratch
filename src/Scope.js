@@ -37,8 +37,8 @@ Scope.prototype.$$digestOnce = function () {
 
         newValue = watcher.watchFn(self);
         oldValue = watcher.last;
-       // if (newValue !== oldValue) {
-           if(!self.$$areEqual(newValue, oldValue,watcher.valueEq)){
+        // if (newValue !== oldValue) {
+        if (!self.$$areEqual(newValue, oldValue, watcher.valueEq)) {
             /** track last dirty watch */
             self.$$lastDirtyWatch = watcher;
             //watcher.last = newValue;
@@ -69,17 +69,24 @@ Scope.prototype.$digest = function () {
     } while (dirty);
 };
 
-Scope.prototype.$$areEqual = function(newValue, oldValue, valueEq){
-    if(valueEq){
+Scope.prototype.$$areEqual = function (newValue, oldValue, valueEq) {
+    if (valueEq) {
         return _.isEqual(newValue, oldValue);
-    }else{
-        return newValue === oldValue || (typeof newValue === 'number' && typeof oldValue === 'number' && isNaN(newValue) && isNaN(oldValue) );
+    } else {
+        return newValue === oldValue || (typeof newValue === 'number' && typeof oldValue === 'number' && isNaN(newValue) && isNaN(oldValue));
     }
 };
 
-Scope.prototype.$eval = function(expr, locals) {
+Scope.prototype.$eval = function (expr, locals) {
     return expr(this, locals);
 };
 
+Scope.prototype.$apply = function (expr) {
+    try {
+        return this.$eval(expr);
+    } finally {
+        this.$digest();
+    }
+};
 
 function initWatchVal() {}
