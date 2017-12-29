@@ -77,5 +77,9 @@ Scope.prototype.$$areEqual = function(newValue, oldValue, valueEq){
     }
 };
 
+Scope.prototype.$eval = function(expr, locals) {
+    return expr(this, locals);
+};
+
 
 function initWatchVal() {}
