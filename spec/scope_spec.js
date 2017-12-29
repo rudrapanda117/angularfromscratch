@@ -415,5 +415,31 @@ describe("Scope", function () {
             }).toThrow();
         });
 
+
+        it("has a $$phase field whose value is the current digest phase", function() {
+            scope.aValue = [1,2,3];
+            scope.phaseInWatchFunction = undefined;
+            scope.phaseInListnerFunction = undefined;
+            scope.phaseInApplyFunction = undefined;
+
+            scope.$watch(
+                function(scope) {
+                    scope.phaseInWatchFunction = scope.$$phase;
+                },
+                function(scope) {
+                    scope.phaseInListnerFunction = scope.$$phase;
+                }
+            );
+
+            scope.$apply(function() {
+                scope.phaseInApplyFunction = scope.$$phase;
+            })
+
+            expect(scope.phaseInWatchFunction).toBe('$digest');
+            expect(scope.phaseInListnerFunction).toBe('$digest');
+            expect(scope.phaseInApplyFunction).toBe('$Apply');
+
+        });
+
     });
 });
