@@ -426,7 +426,7 @@ describe("Scope", function () {
                 function (scope) {
                     scope.phaseInWatchFunction = scope.$$phase;
                 },
-                function (scope) {
+                function (newValue, oldValue, scope) {
                     scope.phaseInListnerFunction = scope.$$phase;
                 }
             );
@@ -437,7 +437,7 @@ describe("Scope", function () {
 
             expect(scope.phaseInWatchFunction).toBe('$digest');
             expect(scope.phaseInListnerFunction).toBe('$digest');
-            expect(scope.phaseInApplyFunction).toBe('$Apply');
+            expect(scope.phaseInApplyFunction).toBe('$apply');
 
         });
 

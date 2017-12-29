@@ -90,20 +90,15 @@ Scope.prototype.$$areEqual = function (newValue, oldValue, valueEq) {
 };
 
 Scope.prototype.$eval = function (expr, locals) {
-    try {
-        this.$beginPhase("$apply");
-        return expr(this, locals);
-    } finally {
-        this.$clearPhase();
-        this.$digest();
-    }
-
+    return expr(this, locals);
 };
 
 Scope.prototype.$apply = function (expr) {
     try {
+        this.$beginPhase("$apply");
         return this.$eval(expr);
     } finally {
+        this.$clearPhase();
         this.$digest();
     }
 };
