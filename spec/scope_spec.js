@@ -218,20 +218,24 @@ describe("Scope", function () {
             scope.$digest();
             expect(watchExecutions).toBe(200);
 
-            
+
         });
 
-        it("does not end digest so that new watches are not run",function(){
+        it("does not end digest so that new watches are not run", function () {
 
             scope.aValue = 'abc';
             scope.counter = 0;
 
             scope.$watch(
-                function(scope){ return scope.aValue;},
-                function(newValue, oldValue, scope){
+                function (scope) {
+                    return scope.aValue;
+                },
+                function (newValue, oldValue, scope) {
                     scope.$watch(
-                        function(scope){ return scope.aValue;},
-                        function(newValue, oldValue, scope){
+                        function (scope) {
+                            return scope.aValue;
+                        },
+                        function (newValue, oldValue, scope) {
                             scope.counter++;
                         }
                     );
@@ -242,13 +246,15 @@ describe("Scope", function () {
             expect(scope.counter).toBe(1);
         });
 
-        it("copmares based on value if enabled ",function(){
-            scope.aValue = [1,2,3];
+        it("copmares based on value if enabled ", function () {
+            scope.aValue = [1, 2, 3];
             scope.counter = 0;
 
             scope.$watch(
-                function(scope){ return scope.aValue;},
-                function(newValue, oldValue, scope){
+                function (scope) {
+                    return scope.aValue;
+                },
+                function (newValue, oldValue, scope) {
                     scope.counter++;
                 },
                 true
@@ -262,13 +268,15 @@ describe("Scope", function () {
             expect(scope.counter).toBe(2);
         });
 
-        it("correctly handles NANs", function(){
-            scope.number = 0/0; // NaN
+        it("correctly handles NANs", function () {
+            scope.number = 0 / 0; // NaN
             scope.counter = 0;
 
             scope.$watch(
-                function(scope) { return scope.number; } ,
-                function(newValue, oldValue, scope) {
+                function (scope) {
+                    return scope.number;
+                },
+                function (newValue, oldValue, scope) {
                     scope.counter++;
                 }
             );
@@ -280,48 +288,73 @@ describe("Scope", function () {
             expect(scope.counter).toBe(1);
         });
 
-        it("executes $eval'ed function and return result", function(){
-                scope.aValue = 42;
-
-                var result = scope.$eval(function(scope){
-                    return scope.aValue;
-                });
-
-                expect(result).toBe(42);
-        });
-
-        it("passes the second $eval argument straight through", function(){
+        it("executes $eval'ed function and return result", function () {
             scope.aValue = 42;
 
-            var result = scope.$eval(function(scope, arg){
-                return scope.aValue + arg ;
-            } , 2);
+            var result = scope.$eval(function (scope) {
+                return scope.aValue;
+            });
+
+            expect(result).toBe(42);
+        });
+
+        it("passes the second $eval argument straight through", function () {
+            scope.aValue = 42;
+
+            var result = scope.$eval(function (scope, arg) {
+                return scope.aValue + arg;
+            }, 2);
 
             expect(result).toBe(44);
         });
 
-        it("executes $apply'ed function and starts the digest", function(){
-            scope.aValue = 'someValue' ;
+        it("executes $apply'ed function and starts the digest", function () {
+            scope.aValue = 'someValue';
             scope.counter = 0;
-        
+
             scope.$watch(
-                function(scope) {
+                function (scope) {
                     return scope.aValue;
                 },
-                function(newValue, oldValue, scope) {
+                function (newValue, oldValue, scope) {
                     scope.counter++;
                 }
             );
-        
+
             scope.$digest();
             expect(scope.counter).toBe(1);
-        
-            scope.$apply(function(scope){
+
+            scope.$apply(function (scope) {
                 scope.aValue = 'someOtherValue';
             });
-        
+
             expect(scope.counter).toBe(2);
         });
-        
+
+
+        it("executes $evalAsync'ed function later in the same cycle", function () {
+            scope.aValue = [1, 2, 3];
+            scope.asyncEvaluated = false;
+            scope.asyncEvaluatedImmediately = false;
+
+            scope.$watch(
+                function (scope) {
+                    return scope.aValue;
+                },
+                function (newValue, oldValue, scope) {
+                    scope.$evalAsync(function (scope) {
+                        scope.asyncEvaluated = true;
+                    });
+                    scope.asyncEvaluatedImmediately = scope.asyncEvaluated;
+                }
+            );
+
+            scope.$digest();
+
+            expect(scope.asyncEvaluated).toBe(true);
+            expect(scope.asyncEvaluatedImmediately).toBe(false);
+
+
+        });
     });
 });
