@@ -75,7 +75,7 @@ Scope.prototype.$digest = function () {
         if (dirty && !(ttl--)) {
             throw new Error("10 digest iterations reached");
         }
-    } while (dirty);
+    } while (dirty || this.$$asyncQueue.length);
 };
 
 Scope.prototype.$$areEqual = function (newValue, oldValue, valueEq) {
