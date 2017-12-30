@@ -489,14 +489,16 @@ describe("Scope", function () {
             }, 50);
         });
 
-        it("never executes $applyAsync'ed function in the same cycle", function(done) {
-            scope.aValue = [1,2,3];
+        it("never executes $applyAsync'ed function in the same cycle", function (done) {
+            scope.aValue = [1, 2, 3];
             scope.asyncApplied = false;
 
             scope.$watch(
-                function(scope) { return scope.aValue; },
-                function(newValue, oldValue, scope) {
-                    scope.$applyAsync(function(scope) {
+                function (scope) {
+                    return scope.aValue;
+                },
+                function (newValue, oldValue, scope) {
+                    scope.$applyAsync(function (scope) {
                         scope.asyncApplied = true;
                     });
                 }
@@ -504,11 +506,34 @@ describe("Scope", function () {
 
             scope.$digest();
             expect(scope.asyncApplied).toBe(true);
-            setTimeout(function() {
+            setTimeout(function () {
+                console.log('qwqww');
                 expect(scope.asyncApplied).toBe(true);
                 done();
-            }, 50 );
+            }, 50);
         });
 
+        it('coalesces many calls to $applyAsync ', function(done) {
+            scope.counter = 0; scope.$watch(
+                function (scope) {
+                    scope.counter++;
+                    return scope.aValue;
+                },
+                function (newValue, oldValue, scope) {}
+            ); 
+            scope.$applyAsync(function (scope) {
+                scope.aValue = 'abc';
+            }); 
+            scope.$applyAsync(function (scope) {
+                scope.aValue = 'def';
+            }); 
+            setTimeout(function () {
+                expect(scope.counter).toBe(2);
+                done();
+            }, 50);
+
+        });
+
+        
     });
 });

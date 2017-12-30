@@ -7,6 +7,8 @@ function Scope() {
     this.$$lastDirtyWatch = null;
     this.$$asyncQueue = [];
     this.$$phase = null;
+    this.$$applyAsyncQueue = [];
+    this.$$applyAsyncId = null;
 }
 
 
@@ -129,6 +131,24 @@ Scope.prototype.$beginPhase = function (phase) {
 
 Scope.prototype.$clearPhase = function () {
     this.$$phase = null;
+};
+
+Scope.prototype.$applyAsync = function (expr) {
+    var self = this;
+    self.$$applyAsyncQueue.push(function () {
+        self.$eval(expr);
+    });
+    if(self.$$applyAsyncId === null) {
+        self.$$applyAsyncId = setTimeout(function () {
+            self.$apply(function () {
+                while (self.$$applyAsyncQueue.length) {
+                    self.$$applyAsyncQueue.shift()();
+                }
+                self.$$applyAsyncId = null;
+            });
+        }, 0);
+    }
+    
 };
 
 function initWatchVal() {}
